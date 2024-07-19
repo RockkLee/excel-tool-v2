@@ -11,9 +11,11 @@ def find_column_unique_values(df: pd.DataFrame, target_value: str) -> list:
     return unique_values
 
 
-def filter_data(df: pd.DataFrame, supplier_name: str, raw_material: str, color: str) -> pd.DataFrame:
+def filter_data(df: pd.DataFrame, supplier_names: list, raw_materials: list, colors: list) -> pd.DataFrame:
     output_df = df[
-        (df['Supplier Name'] == supplier_name) & (df['Raw Material #'] == raw_material) & (df['Color'] == color)
+        (df['Supplier Name'].isin(supplier_names)) &
+        (df['Raw Material #'].isin(raw_materials)) &
+        (df['Color'].isin(colors))
     ]
     return output_df
 
@@ -59,8 +61,8 @@ class ExcelHelper:
         return find_column_unique_values(self.df, target_value)
 
     def export(
-            self, supplier_name: str, raw_material: str, color: str,
+            self, supplier_names: list, raw_materials: list, colors: list,
             filename: str, sheetname: str, usecols: list
     ):
-        output_df = filter_data(self.df, supplier_name, raw_material, color)
+        output_df = filter_data(self.df, supplier_names, raw_materials, colors)
         export(output_df, filename, sheetname, usecols)

@@ -31,7 +31,7 @@ class TestLibFindColumnUniqueValues(TestCase):
 class TestLibFilterData(TestCase):
     def test_func(self):
         print(df["Raw Material #"].unique())
-        output_df = filter_data(df, 'Marvel', '222', 'red')
+        output_df = filter_data(df, ['Marvel'], ['222'], ['red'])
         print(output_df["Raw Material #"].unique())
 
 
