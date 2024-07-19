@@ -7,3 +7,10 @@
 ## Output
 - Style
 - Component
+
+## Export the project to exe file
+```python
+mkdir exe
+cd exe
+pyinstaller ../excel_tool.py ../lib.py --onefile -w
+```

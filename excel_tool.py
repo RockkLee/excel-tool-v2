@@ -3,7 +3,7 @@ from tkinter import ttk, messagebox
 from lib import ExcelHelper
 
 
-OUTPUT_FILENAME = "output.xlsx"
+OUTPUT_FILENAME = "output"
 OUTPUT_SHEETNAME = "filtered data"
 FILTERED_COLUMNS = ["Style", "Component"]
 
