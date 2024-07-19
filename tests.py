@@ -1,7 +1,6 @@
 import pandas as pd
 from unittest import TestCase
-from lib import find_column_unique_values, filter_data, export
-
+from lib import find_column_unique_values, filter_data, export, load_excel_file
 
 FILE_NAME = './test_data/test_1.xlsx'
 SHEET_NAME = '工作表1'
@@ -38,4 +37,12 @@ class TestLibFilterData(TestCase):
 
 class TestLibExport(TestCase):
     def test_func(self):
-        export(df, ['Supplier Name', 'Raw Material #', 'Color'])
+        export(df, "output.xlsx", "filtered data",
+               ["Style", "Component"])
+
+
+class TestLoadExcelFile(TestCase):
+    def test_func(self):
+        (file_path, sheet_name) = load_excel_file()
+        print(file_path)
+        print(sheet_name)
