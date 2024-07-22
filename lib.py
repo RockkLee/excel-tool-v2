@@ -1,6 +1,9 @@
 from tkinter import filedialog, simpledialog
+from typing import Optional
 
 import pandas as pd
+
+from dto import SupplierNameCol, RawMaterialCol, ColorCol, ColumnDto, StyleCol, ComponentCol
 
 
 def find_column_unique_values(df: pd.DataFrame, target_value: str) -> list:
@@ -11,16 +14,30 @@ def find_column_unique_values(df: pd.DataFrame, target_value: str) -> list:
     return unique_values
 
 
-def filter_data(df: pd.DataFrame, supplier_names: list, raw_materials: list, colors: list) -> pd.DataFrame:
+def filter_data_3(df: pd.DataFrame,
+                  col1: ColumnDto, col2: ColumnDto, col3: ColumnDto) -> pd.DataFrame:
     output_df = df[
-        (df['Supplier Name'].isin(supplier_names)) &
-        (df['Raw Material #'].isin(raw_materials)) &
-        (df['Color'].isin(colors))
+        (df[col1.__name__].isin(col1.ls)) &
+        (df[col2.__name__].isin(col2.ls)) &
+        (df[col3.__name__].isin(col3.ls))
     ]
     return output_df
 
 
-def export(df: pd.DataFrame, filename, sheetname, usecols: list):
+def filter_data_2(df: pd.DataFrame,
+                  col1: ColumnDto, col2: ColumnDto) -> pd.DataFrame:
+    output_df = df[
+        (df[col1.__name__].isin(col1.ls)) &
+        (df[col2.__name__].isin(col2.ls))
+    ]
+    return output_df
+
+
+def export(df: pd.DataFrame, filename: str, sheetname: str, usecols: Optional[list] = None):
+    if usecols is None:
+        df.to_excel(f'{filename}.xlsx', sheet_name=sheetname, index=False)
+        return
+
     df_selected = df[usecols]
     df_selected.to_excel(f'{filename}.xlsx', sheet_name=sheetname, index=False)
 
@@ -56,13 +73,28 @@ class ExcelHelper:
         df = pd.read_excel(file_path, sheet_name=sheet_name, nrows=1)
         col_str_dic = {column: str for column in df.columns}
         self.df = pd.read_excel(file_path, sheet_name=sheet_name, dtype=col_str_dic)
+        print(
+            f"""\
+            sheet_name: {sheet_name}
+            file_path: {file_path}
+            """
+        )
 
     def get_col_unique_values(self, target_value: str) -> list:
         return find_column_unique_values(self.df, target_value)
 
     def export(
             self, supplier_names: list, raw_materials: list, colors: list,
-            filename: str, sheetname: str, usecols: list
+            filename: str, sheetname: str
     ):
-        output_df = filter_data(self.df, supplier_names, raw_materials, colors)
-        export(output_df, filename, sheetname, usecols)
+        output_df = filter_data_3(self.df,
+                                  SupplierNameCol(supplier_names), RawMaterialCol(raw_materials), ColorCol(colors))
+
+        styles = find_column_unique_values(output_df, 'Style')
+        components = find_column_unique_values(output_df, 'Component')
+        print(f"styles: {styles}")
+        print(f"components: {components}")
+        print()
+        output_df = filter_data_2(self.df, StyleCol(styles), ComponentCol(components))
+
+        export(output_df, filename, sheetname)
