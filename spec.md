@@ -19,5 +19,11 @@
 ```python
 mkdir exe
 cd exe
-pyinstaller ../excel_tool.py ../lib.py --onefile -w
+pyinstaller ../excel_tool.py ../lib.py ../dto.py --onefile -w
 ```
+
+---
+
+# Spec 2.0
+- Add search bars in UI
+- Replace the Component filter with the Color filter

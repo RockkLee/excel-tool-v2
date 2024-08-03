@@ -91,10 +91,10 @@ class ExcelHelper:
                                   SupplierNameCol(supplier_names), RawMaterialCol(raw_materials), ColorCol(colors))
 
         styles = find_column_unique_values(output_df, 'Style')
-        components = find_column_unique_values(output_df, 'Component')
+        colors = find_column_unique_values(output_df, 'Color')
         print(f"styles: {styles}")
-        print(f"components: {components}")
+        print(f"colors: {colors}")
         print()
-        output_df = filter_data_2(self.df, StyleCol(styles), ComponentCol(components))
+        output_df = filter_data_2(self.df, StyleCol(styles), ColorCol(colors))
 
         export(output_df, filename, sheetname)

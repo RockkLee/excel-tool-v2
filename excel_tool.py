@@ -1,8 +1,8 @@
 import os
+import re
 import tkinter as tk
 from tkinter import ttk, messagebox
 from lib import ExcelHelper
-
 
 OUTPUT_FILENAME = "output"
 OUTPUT_SHEETNAME = "filtered data"
@@ -17,6 +17,21 @@ def get_unique_filename(base_filename: str, file_extension: str = ".xlsx"):
         new_filename = f"{base_filename}-{counter}"
     print(f"filename: {base_filename}, new_filename: {new_filename}")
     return new_filename
+
+
+def filter_list(listbox: tk.Listbox, entry: tk.Entry, items: list):
+    if not entry.get():
+        listbox.delete(0, tk.END)
+        for item in items:
+            listbox.insert(tk.END, item)
+        return
+
+    search_term = entry.get()
+    regex = re.compile(f'^{re.escape(search_term)}', re.IGNORECASE)
+    listbox.delete(0, tk.END)
+    for item in items:
+        if regex.match(item):
+            listbox.insert(tk.END, item)
 
 
 def on_button_click(excel_helper: ExcelHelper, supplier_listbox, raw_material_listbox, color_listbox):
@@ -57,6 +72,7 @@ if __name__ == "__main__":
     raw_material_opt = excel_helper.get_col_unique_values("Raw Material #")
     color_opt = excel_helper.get_col_unique_values("Color")
 
+
     # Function to create and configure a Listbox
     def create_listbox(options):
         listbox = tk.Listbox(root, selectmode=tk.MULTIPLE, exportselection=0)
@@ -64,29 +80,54 @@ if __name__ == "__main__":
             listbox.insert(tk.END, option)
         return listbox
 
+
     # Create and place the Listboxes and Labels
     # Supplier Name
     supplier_label = ttk.Label(root, text="Supplier Name:")
     supplier_label.grid(row=0, column=0, padx=5, pady=5, sticky="w")
     supplier_listbox = create_listbox(supplier_name_opt)
     supplier_listbox.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+    supplier_filter_frame = ttk.Frame(root)  # Create a sub-frame
+    supplier_filter_frame.grid(row=0, column=2, padx=5, pady=5)
+    supplier_filter_entry = ttk.Entry(supplier_filter_frame)
+    supplier_filter_entry.pack()
+    supplier_filter_btn = ttk.Button(supplier_filter_frame, text="Filter", command=lambda: filter_list(
+        supplier_listbox, supplier_filter_entry, supplier_name_opt
+    ))
+    supplier_filter_btn.pack()
 
     # Raw Material
     raw_material_label = ttk.Label(root, text="Raw Material:")
     raw_material_label.grid(row=1, column=0, padx=5, pady=5, sticky="w")
     raw_material_listbox = create_listbox(raw_material_opt)
     raw_material_listbox.grid(row=1, column=1, padx=5, pady=5, sticky="w")
+    raw_material_filter_frame = ttk.Frame(root)  # Create a sub-frame
+    raw_material_filter_frame.grid(row=1, column=2, padx=5, pady=5)
+    raw_material_filter_entry = ttk.Entry(raw_material_filter_frame)
+    raw_material_filter_entry.pack()
+    raw_material_filter_btn = ttk.Button(raw_material_filter_frame, text="Filter", command=lambda: filter_list(
+        raw_material_listbox, raw_material_filter_entry, raw_material_opt
+    ))
+    raw_material_filter_btn.pack()
 
     # Color
     color_label = ttk.Label(root, text="Color:")
     color_label.grid(row=2, column=0, padx=5, pady=5, sticky="w")
     color_listbox = create_listbox(color_opt)
     color_listbox.grid(row=2, column=1, padx=5, pady=5, sticky="w")
+    color_filter_frame = ttk.Frame(root)  # Create a sub-frame
+    color_filter_frame.grid(row=2, column=2, padx=5, pady=5)
+    color_filter_entry = ttk.Entry(color_filter_frame)
+    color_filter_entry.pack()
+    color_filter_btn = ttk.Button(color_filter_frame, text="Filter", command=lambda: filter_list(
+        color_listbox, color_filter_entry, color_opt
+    ))
+    color_filter_btn.pack()
 
-    button = ttk.Button(root, text="Export",
-                        command=lambda: on_button_click(excel_helper,
-                                                        supplier_listbox, raw_material_listbox, color_listbox))
-    button.grid(row=3, column=0, padx=5, pady=5)
+    export_btn = ttk.Button(root, text="Export",
+                            command=lambda: on_button_click(excel_helper,
+                                                            supplier_listbox, raw_material_listbox, color_listbox))
+    export_btn.grid(row=3, column=0, padx=5, pady=5)
 
     # Start the Tkinter event loop
     root.mainloop()

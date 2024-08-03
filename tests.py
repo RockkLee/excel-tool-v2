@@ -36,13 +36,13 @@ class TestLibFilterData(TestCase):
     def test_func(self):
         print(df["Raw Material #"].unique())
         SupplierNameCol(['Marvel'])
-        output_df = filter_data_3(df, SupplierNameCol(['Marvel']), RawMaterialCol(['222']), ColorCol(['red']))
+        output_df = filter_data_3(df, SupplierNameCol(['Marvel']), RawMaterialCol(['222']), ColorCol(['red', 'Red']))
         print(output_df["Raw Material #"].unique())
 
 
 class TestLibExport(TestCase):
     def test_func(self):
-        usecols = ["Style", "Component"]
+        usecols = ["Style", "Color"]
         export(df, "output", "filtered data", usecols)
         export(df, "output_no_filter", "filtered data")
 
